@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DZ</string>
+    <string name="home">Home</string>
+    <string name="payments">Payments</string>
+    <string name="empty">Empty</string>
+    <string name="search">Search</string>
+    <string name="an_unexpected_error_occurred">An unexpected error occurred</string>
+    <string name="database_not_available">Database not available</string>
+    <string name="there_are_no_students">There are no students</string>
+</resources>

@@ -1,0 +1,23 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS studentWithExams (
+    student_id TEXT NOT NULL DEFAULT '',
+    exam_id TEXT NOT NULL DEFAULT '',
+    made_at TEXT NOT NULL DEFAULT '',
+    passed INTEGER AS Boolean NOT NULL DEFAULT 0,
+    FOREIGN KEY(student_id) REFERENCES student(id),
+    FOREIGN KEY(exam_id) REFERENCES exams(id)
+);
+
+addStudentWithExam:
+INSERT OR REPLACE
+INTO studentWithExams (
+student_id,
+exam_id,
+made_at,
+passed
+)
+VALUES ?;
+
+deleteStudentsWithExams:
+DELETE FROM studentWithExams;

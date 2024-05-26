@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS payment (
+    id TEXT NOT NULL DEFAULT '' PRIMARY KEY,
+    student_id TEXT NOT NULL DEFAULT '',
+    payment_mode TEXT NOT NULL DEFAULT '',
+    bank TEXT NOT NULL DEFAULT '',
+    amount TEXT NOT NULL DEFAULT '',
+    corresponds_to TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY(student_id) REFERENCES student(id)
+);
+
+getPayments:
+SELECT *
+FROM payment;
+
+getPayment:
+SELECT *
+FROM payment
+WHERE payment.id = :id;
+
+addPayment:
+INSERT OR REPLACE
+INTO payment (
+    id,
+    student_id,
+    payment_mode,
+    bank,
+    amount,
+    corresponds_to
+)
+VALUES ?;
+
+deletePayments:
+DELETE FROM payment;

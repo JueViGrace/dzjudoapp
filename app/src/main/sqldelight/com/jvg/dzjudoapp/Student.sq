@@ -1,0 +1,53 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS student (
+    id TEXT NOT NULL DEFAULT '' PRIMARY KEY,
+    name TEXT NOT NULL DEFAULT '',
+    lastname TEXT NOT NULL DEFAULT '',
+    birthday TEXT NOT NULL DEFAULT '',
+    address TEXT NOT NULL DEFAULT '',
+    phone TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL DEFAULT '',
+    start_date TEXT NOT NULL DEFAULT '',
+    belt TEXT NOT NULL DEFAULT '',
+    representative_name TEXT NOT NULL DEFAULT '',
+    emergency_phone TEXT NOT NULL DEFAULT '',
+    active INTEGER AS Boolean NOT NULL DEFAULT 1
+);
+
+getStudents:
+SELECT *
+FROM student;
+
+getStudent:
+SELECT *
+FROM student
+WHERE
+student.id = :id;
+
+addStudent:
+INSERT OR REPLACE
+INTO student (
+id,
+name,
+lastname,
+birthday,
+address,
+phone,
+email,
+start_date,
+belt,
+representative_name,
+emergency_phone
+)
+VALUES ?;
+
+activeStudent:
+UPDATE student
+SET active = :active
+WHERE student.id = :id;
+
+deleteStudent:
+DELETE FROM student
+WHERE
+student.id = :id;
