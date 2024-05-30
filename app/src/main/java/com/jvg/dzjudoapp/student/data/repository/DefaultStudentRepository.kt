@@ -1,8 +1,10 @@
 package com.jvg.dzjudoapp.student.data.repository
 
 import com.jvg.dzjudoapp.R
+import com.jvg.dzjudoapp.core.common.Constants.DB_ERROR_MESSAGE
 import com.jvg.dzjudoapp.core.common.log
 import com.jvg.dzjudoapp.core.state.RequestState
+import com.jvg.dzjudoapp.student.data.mappers.toDatabase
 import com.jvg.dzjudoapp.student.data.mappers.toDomain
 import com.jvg.dzjudoapp.student.data.source.StudentDataSource
 import com.jvg.dzjudoapp.student.domain.model.Student
@@ -25,43 +27,60 @@ class DefaultStudentRepository(
             .catch { e ->
                 emit(
                     RequestState.Error(
-                        message = R.string.database_not_available
+                        message = DB_ERROR_MESSAGE
                     )
                 )
                 e.log(tag = "STUDENT REPOSITORY: getStudents")
             }
             .collect { cachedList ->
-                if (cachedList.isNotEmpty()) {
+
+                emit(
+                    RequestState.Success(
+                        data = cachedList.map { studentEntity ->
+                            studentEntity.toDomain()
+                        }
+                    )
+                )
+            }
+    }.flowOn(coroutineContext)
+
+    override fun getStudent(id: String): Flow<RequestState<Student>> = flow<RequestState<Student>> {
+        emit(RequestState.Loading)
+
+        studentDataSource.studentLocal.getStudent(id)
+            .catch { e ->
+                emit(
+                    RequestState.Error(
+                        message = DB_ERROR_MESSAGE
+                    )
+                )
+            }
+            .collect { studentEntity ->
+                if (studentEntity != null) {
                     emit(
                         RequestState.Success(
-                            data = cachedList.map { studentEntity ->
-                                studentEntity.toDomain()
-                            }
+                            data = studentEntity.toDomain()
                         )
                     )
                 } else {
                     emit(
                         RequestState.Error(
-                            message = R.string.there_are_no_students
+                            message = R.string.this_student_doesn_t_exists
                         )
                     )
                 }
             }
     }.flowOn(coroutineContext)
 
-    override fun getStudent(id: String): Flow<RequestState<Student>> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun addStudent(student: Student) {
-        TODO("Not yet implemented")
+        studentDataSource.studentLocal.addStudent(student.toDatabase())
     }
 
-    override suspend fun activeStudents(active: String, id: String) {
-        TODO("Not yet implemented")
+    override suspend fun activeStudents(active: Boolean, id: String) {
+        studentDataSource.studentLocal.activeStudent(active, id)
     }
 
     override suspend fun deleteStudent(id: String) {
-        TODO("Not yet implemented")
+        studentDataSource.studentLocal.deleteStudent(id)
     }
 }

@@ -6,6 +6,12 @@ import com.jvg.dzjudoapp.student.data.repository.DefaultStudentRepository
 import com.jvg.dzjudoapp.student.data.source.DefaultStudentDataSource
 import com.jvg.dzjudoapp.student.data.source.StudentDataSource
 import com.jvg.dzjudoapp.student.domain.repository.StudentRepository
+import com.jvg.dzjudoapp.student.domain.usecase.ActiveStudent
+import com.jvg.dzjudoapp.student.domain.usecase.AddStudent
+import com.jvg.dzjudoapp.student.domain.usecase.DeleteStudent
+import com.jvg.dzjudoapp.student.domain.usecase.GetStudent
+import com.jvg.dzjudoapp.student.domain.usecase.GetStudents
+import com.jvg.dzjudoapp.student.presentation.viewmodel.AddStudentViewModel
 import com.jvg.dzjudoapp.student.presentation.viewmodel.StudentsViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -19,5 +25,17 @@ val studentModule = module {
 
     singleOf(::DefaultStudentRepository) bind StudentRepository::class
 
+    singleOf(::GetStudents)
+
+    singleOf(::AddStudent)
+
+    singleOf(::GetStudent)
+
+    singleOf(::ActiveStudent)
+
+    singleOf(::DeleteStudent)
+
     factoryOf(::StudentsViewModel)
+
+    factoryOf(::AddStudentViewModel)
 }

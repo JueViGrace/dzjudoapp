@@ -12,7 +12,7 @@ fun DefaultTopBar(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {},
-    navigationIcon: @Composable () -> Unit
+    navigationIcon: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier,

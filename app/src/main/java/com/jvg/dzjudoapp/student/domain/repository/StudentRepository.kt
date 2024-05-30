@@ -16,7 +16,7 @@ interface StudentRepository {
 
     suspend fun addStudent(student: Student)
 
-    suspend fun activeStudents(active: String, id: String)
+    suspend fun activeStudents(active: Boolean, id: String)
 
     suspend fun deleteStudent(id: String)
 }

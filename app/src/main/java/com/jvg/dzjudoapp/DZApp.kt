@@ -10,9 +10,7 @@ class DZApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Koin().initKoin(
-            additionalModules = listOf()
-        ) {
+        Koin().initKoin {
             androidContext(this@DZApp)
             androidLogger(level = Level.DEBUG)
         }
