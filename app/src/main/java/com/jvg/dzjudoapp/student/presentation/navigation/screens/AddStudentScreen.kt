@@ -34,6 +34,7 @@ import com.jvg.dzjudoapp.core.presentation.components.DatePickerComponent
 import com.jvg.dzjudoapp.core.presentation.components.DefaultBackArrow
 import com.jvg.dzjudoapp.core.presentation.components.DefaultLayoutComponent
 import com.jvg.dzjudoapp.core.presentation.components.DefaultTopBar
+import com.jvg.dzjudoapp.core.presentation.components.ListFooter
 import com.jvg.dzjudoapp.core.presentation.components.TextFieldComponent
 import com.jvg.dzjudoapp.student.presentation.events.AddStudentEvent
 import com.jvg.dzjudoapp.student.presentation.viewmodel.AddStudentViewModel
@@ -76,19 +77,20 @@ class AddStudentScreen : Screen {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        viewModel.onEvent(AddStudentEvent.SaveStudent)
-                        if (viewModel.getErrors()) {
+                if (!state.errors) {
+                    FloatingActionButton(
+                        onClick = {
+                            viewModel.onEvent(AddStudentEvent.SaveStudent)
+
                             navigator.pop()
-                            viewModel.onEvent(AddStudentEvent.DismissStudent)
                         }
+
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_check_24px),
+                            contentDescription = "Check"
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_check_24px),
-                        contentDescription = "Check"
-                    )
                 }
             }
         ) {
@@ -338,6 +340,10 @@ class AddStudentScreen : Screen {
                             }
                         )
                     }
+                }
+
+                item {
+                    ListFooter()
                 }
             }
         }

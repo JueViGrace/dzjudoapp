@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS student (
 
 getStudents:
 SELECT *
-FROM student;
+FROM student
+ORDER BY student.name;
 
 getStudent:
 SELECT *
@@ -40,7 +41,8 @@ email,
 start_date,
 belt,
 representative_name,
-emergency_phone
+emergency_phone,
+active
 )
 VALUES ?;
 

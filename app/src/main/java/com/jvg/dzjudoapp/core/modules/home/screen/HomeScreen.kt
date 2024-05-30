@@ -97,7 +97,7 @@ class HomeScreen : Screen {
                                 },
                                 onClick = {
                                     visible = false
-                                    navigator.parent?.push(AddStudentScreen())
+                                    navigator.push(AddStudentScreen())
                                 }
                             )
                             DropdownMenuItem(
@@ -106,7 +106,6 @@ class HomeScreen : Screen {
                                 },
                                 onClick = {
                                     visible = false
-
                                 }
                             )
                         }

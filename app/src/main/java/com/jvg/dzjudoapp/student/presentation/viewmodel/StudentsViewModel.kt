@@ -5,15 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.jvg.dzjudoapp.core.common.Constants.SHARING_STARTED
 import com.jvg.dzjudoapp.core.state.RequestState
 import com.jvg.dzjudoapp.student.domain.model.Student
+import com.jvg.dzjudoapp.student.domain.usecase.ActiveStudent
+import com.jvg.dzjudoapp.student.domain.usecase.DeleteStudent
 import com.jvg.dzjudoapp.student.domain.usecase.GetStudents
 import com.jvg.dzjudoapp.student.presentation.state.StudentsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class StudentsViewModel(
-    getStudents: GetStudents
+    getStudents: GetStudents,
+    private val activeStudent: ActiveStudent,
+    private val deleteStudent: DeleteStudent,
+    private val coroutineContext: CoroutineContext
 ) : ViewModel() {
     private var _state: MutableStateFlow<StudentsState> = MutableStateFlow(StudentsState())
     val state = combine(
@@ -72,6 +79,18 @@ class StudentsViewModel(
             studentsState.copy(
                 searchBarVisible = force ?: studentsState.searchBarVisible
             )
+        }
+    }
+
+    fun onActive(value: Boolean, id: String) {
+        viewModelScope.launch(coroutineContext) {
+            activeStudent(value, id)
+        }
+    }
+
+    fun onDelete(id: String) {
+        viewModelScope.launch(coroutineContext) {
+            deleteStudent(id)
         }
     }
 }

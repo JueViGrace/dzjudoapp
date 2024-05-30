@@ -11,7 +11,9 @@ import com.jvg.dzjudoapp.student.domain.usecase.AddStudent
 import com.jvg.dzjudoapp.student.domain.usecase.DeleteStudent
 import com.jvg.dzjudoapp.student.domain.usecase.GetStudent
 import com.jvg.dzjudoapp.student.domain.usecase.GetStudents
+import com.jvg.dzjudoapp.student.domain.usecase.ValidateStudent
 import com.jvg.dzjudoapp.student.presentation.viewmodel.AddStudentViewModel
+import com.jvg.dzjudoapp.student.presentation.viewmodel.StudentDetailsViewModel
 import com.jvg.dzjudoapp.student.presentation.viewmodel.StudentsViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -35,7 +37,11 @@ val studentModule = module {
 
     singleOf(::DeleteStudent)
 
+    singleOf(::ValidateStudent)
+
     factoryOf(::StudentsViewModel)
 
     factoryOf(::AddStudentViewModel)
+
+    factoryOf(::StudentDetailsViewModel)
 }

@@ -3,12 +3,21 @@ package com.jvg.dzjudoapp.student.presentation.navigation.tab
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -26,17 +35,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.jvg.dzjudoapp.R
 import com.jvg.dzjudoapp.core.modules.home.routes.HomeTabs
+import com.jvg.dzjudoapp.core.presentation.components.CustomClickableCard
 import com.jvg.dzjudoapp.core.presentation.components.CustomText
+import com.jvg.dzjudoapp.core.presentation.components.DefaultAlertDialog
 import com.jvg.dzjudoapp.core.presentation.components.DefaultBackArrow
 import com.jvg.dzjudoapp.core.presentation.components.DefaultStateLayoutComponent
 import com.jvg.dzjudoapp.core.presentation.components.DefaultTopBar
 import com.jvg.dzjudoapp.core.presentation.components.ErrorScreen
+import com.jvg.dzjudoapp.core.presentation.components.LetterIcon
+import com.jvg.dzjudoapp.core.presentation.components.ListFooter
+import com.jvg.dzjudoapp.core.presentation.components.ListStickyHeader
 import com.jvg.dzjudoapp.core.presentation.components.SearchBarComponent
+import com.jvg.dzjudoapp.student.domain.model.Student
+import com.jvg.dzjudoapp.student.presentation.navigation.screens.StudentDetailsScreen
 import com.jvg.dzjudoapp.student.presentation.viewmodel.StudentsViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -53,8 +72,10 @@ object StudentsTab : Tab {
             )
         }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = koinViewModel<StudentsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val tabOptions = LocalTabNavigator.current.current.options
@@ -152,8 +173,37 @@ object StudentsTab : Tab {
                     verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(students) { student ->
-                        CustomText(text = student.id)
+                    students.groupBy {
+                        it.name.first()
+                    }.forEach { (initial, list) ->
+
+                        stickyHeader {
+                            ListStickyHeader(text = initial.toString())
+                        }
+
+                        items(list) { student ->
+                            StudentListContent(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 10.dp),
+                                student = student,
+                                onSelect = { id ->
+                                    navigator.parent?.push(StudentDetailsScreen(id))
+                                },
+                                onActive = { active, id ->
+                                    viewModel.onActive(active, id)
+                                },
+                                onDelete = { id ->
+                                    viewModel.onDelete(id)
+                                }
+                            )
+                        }
+                    }
+
+                    item {
+                        ListFooter(
+                            text = stringResource(R.string.end_of_list)
+                        )
                     }
                 }
             } else {
@@ -164,6 +214,106 @@ object StudentsTab : Tab {
                     ErrorScreen(
                         message = R.string.there_are_no_students
                     )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun StudentListContent(
+        modifier: Modifier = Modifier,
+        student: Student,
+        onSelect: (String) -> Unit,
+        onActive: (Boolean, String) -> Unit,
+        onDelete: (String) -> Unit
+    ) {
+        var showDialog by remember {
+            mutableStateOf(false)
+        }
+
+        AnimatedVisibility(visible = showDialog) {
+            DefaultAlertDialog(
+                title = "${stringResource(R.string.delete)} ${student.name} ${student.lastname}?",
+                text = "${
+                    stringResource(R.string.are_you_sure_you_want_to_delete)
+                } ${student.name} ${student.lastname}?",
+                icon = R.drawable.ic_delete_24px,
+                onVisibleChange = { newValue ->
+                    showDialog = newValue
+                },
+                onConfirm = {
+                    onDelete(student.id)
+                },
+                onCancel = {
+                    showDialog = false
+                }
+            )
+        }
+
+        Column(
+            modifier = modifier.clickable {
+                onSelect(student.id)
+            },
+            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.Top),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    LetterIcon(letter = student.name.first().toString())
+                    CustomText(text = "${student.name} ${student.lastname}")
+                }
+                Checkbox(
+                    checked = student.active,
+                    onCheckedChange = { newValue ->
+                        onActive(newValue, student.id)
+                    }
+                )
+            }
+
+            if (!student.active) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CustomClickableCard(
+                        modifier = Modifier.weight(1f),
+                        colors = CardDefaults.elevatedCardColors().copy(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        ),
+                        shape = RoundedCornerShape(20)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(5.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CustomText(
+                                text = stringResource(R.string.inactive_student),
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                fontWeight = MaterialTheme.typography.titleMedium.fontWeight
+                            )
+                        }
+                    }
+                    IconButton(
+                        onClick = { showDialog = true }
+                    ) {
+                        Icon(
+                            tint = MaterialTheme.colorScheme.error,
+                            painter = painterResource(id = R.drawable.ic_delete_24px),
+                            contentDescription = "Delete student"
+                        )
+                    }
                 }
             }
         }
