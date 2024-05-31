@@ -72,5 +72,6 @@ object StudentValidator {
         val beltError: Int? = null,
         val representativeNameError: Int? = null,
         val emergencyPhoneError: Int? = null,
+        val errors: List<Int> = emptyList()
     )
 }

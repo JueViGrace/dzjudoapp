@@ -39,17 +39,18 @@ import com.jvg.dzjudoapp.core.presentation.components.TextFieldComponent
 import com.jvg.dzjudoapp.student.presentation.events.AddStudentEvent
 import com.jvg.dzjudoapp.student.presentation.viewmodel.AddStudentViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-class AddStudentScreen : Screen {
+data class AddStudentScreen(
+    val id: String = ""
+) : Screen {
     override val key: ScreenKey = super.key + uniqueScreenKey
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel<AddStudentViewModel>()
+        val viewModel = koinViewModel<AddStudentViewModel>(parameters = { parametersOf(id) })
         val state by viewModel.state.collectAsStateWithLifecycle()
-
-        println(state)
 
         DefaultLayoutComponent(
             topBar = {
@@ -57,10 +58,10 @@ class AddStudentScreen : Screen {
                     title = {
                         CustomText(
                             text = if (
-                                state.student.name.isNotBlank() &&
-                                state.student.lastname.isNotBlank()
+                                state.newStudent.name.isNotBlank() &&
+                                state.newStudent.lastname.isNotBlank()
                             ) {
-                                "${state.student.name} ${state.student.lastname}"
+                                "${state.newStudent.name} ${state.newStudent.lastname}"
                             } else {
                                 stringResource(R.string.create_a_new_student)
                             },
@@ -77,14 +78,13 @@ class AddStudentScreen : Screen {
                 )
             },
             floatingActionButton = {
-                if (!state.errors) {
+                if (state.errors == false) {
                     FloatingActionButton(
                         onClick = {
                             viewModel.onEvent(AddStudentEvent.SaveStudent)
 
                             navigator.pop()
                         }
-
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_check_24px),
@@ -111,7 +111,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.name,
+                        value = state.newStudent.name,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnNameChanged(newValue))
                         },
@@ -132,7 +132,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.lastname,
+                        value = state.newStudent.lastname,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnLastNameChanged(newValue))
                         },
@@ -155,7 +155,7 @@ class AddStudentScreen : Screen {
                             .padding(horizontal = 5.dp),
                         label = R.string.birthday,
                         icon = R.drawable.ic_event_24px,
-                        value = state.student.birthday,
+                        value = state.newStudent.birthday,
                         onTextSelected = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnBirthdayChanged(newValue))
                         }
@@ -167,7 +167,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.dni,
+                        value = state.newStudent.dni,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnDniChanged(newValue))
                         },
@@ -188,7 +188,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.address,
+                        value = state.newStudent.address,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnAddressChanged(newValue))
                         },
@@ -209,7 +209,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.phone,
+                        value = state.newStudent.phone,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnPhoneChanged(newValue))
                         },
@@ -230,7 +230,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.email,
+                        value = state.newStudent.email,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnEmailChanged(newValue))
                         },
@@ -253,7 +253,7 @@ class AddStudentScreen : Screen {
                             .padding(horizontal = 5.dp),
                         label = R.string.start_date,
                         icon = R.drawable.ic_calendar_month_24px,
-                        value = state.student.startDate,
+                        value = state.newStudent.startDate,
                         onTextSelected = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnStartsDateChanged(newValue))
                         }
@@ -265,7 +265,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.belt,
+                        value = state.newStudent.belt,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnBeltChanged(newValue))
                         },
@@ -286,7 +286,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.representativeName,
+                        value = state.newStudent.representativeName,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnRepresentativeChanged(newValue))
                         },
@@ -307,7 +307,7 @@ class AddStudentScreen : Screen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
-                        value = state.student.emergencyPhone,
+                        value = state.newStudent.emergencyPhone,
                         newValue = { newValue ->
                             viewModel.onEvent(AddStudentEvent.OnEmergencyPhoneChanged(newValue))
                         },
@@ -334,7 +334,7 @@ class AddStudentScreen : Screen {
                         CustomText(text = "${stringResource(R.string.active)}:")
 
                         Checkbox(
-                            checked = state.student.active,
+                            checked = state.newStudent.active,
                             onCheckedChange = { newValue ->
                                 viewModel.onEvent(AddStudentEvent.OnActiveChanged(newValue))
                             }

@@ -11,7 +11,7 @@ class ValidateStudent(
     private val coroutineContext: CoroutineContext
 ) {
     operator fun invoke(student: Student): Flow<StudentValidator.StudentValidationResult> = flow {
-        val result = StudentValidator.validateStudent(student)
+        var result = StudentValidator.validateStudent(student)
         val errors = listOfNotNull(
             result.nameError,
             result.lastnameError,
@@ -26,10 +26,10 @@ class ValidateStudent(
             result.emergencyPhoneError,
         )
 
-        if (errors.isEmpty()) {
-            emit(result)
-        } else {
-            emit(result)
-        }
+        result = result.copy(
+            errors = errors
+        )
+
+        emit(result)
     }.flowOn(coroutineContext)
 }

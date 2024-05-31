@@ -1,24 +1,25 @@
-CREATE TABLE IF NOT EXISTS exams (
+CREATE TABLE IF NOT EXISTS exam (
     id TEXT NOT NULL DEFAULT '' PRIMARY KEY,
     name TEXT NOT NULL DEFAULT ''
 );
 
 getExams:
 SELECT *
-FROM exams;
+FROM exam;
 
 getExam:
 SELECT *
-FROM exams
-WHERE exams.id = :id;
+FROM exam
+WHERE exam.id = :id;
 
 addExam:
 INSERT OR REPLACE
-INTO exams (
+INTO exam (
 id,
 name
 )
 VALUES ?;
 
-deleteExams:
-DELETE FROM exams;
+deleteExam:
+DELETE FROM exam
+WHERE exam.id = :id;

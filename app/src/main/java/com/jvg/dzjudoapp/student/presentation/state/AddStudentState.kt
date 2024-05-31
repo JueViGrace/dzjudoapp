@@ -3,7 +3,7 @@ package com.jvg.dzjudoapp.student.presentation.state
 import com.jvg.dzjudoapp.student.domain.model.Student
 
 data class AddStudentState(
-    val student: Student = Student(),
+    val newStudent: Student = Student(),
     val nameError: Int? = null,
     val lastnameError: Int? = null,
     val birthdayError: Int? = null,
@@ -15,5 +15,5 @@ data class AddStudentState(
     val beltError: Int? = null,
     val representativeNameError: Int? = null,
     val emergencyPhoneError: Int? = null,
-    val errors: Boolean = true
+    val errors: Boolean? = null
 )

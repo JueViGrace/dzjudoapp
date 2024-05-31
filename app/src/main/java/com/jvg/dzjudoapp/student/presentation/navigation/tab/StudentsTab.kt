@@ -12,14 +12,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -43,12 +39,14 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.jvg.dzjudoapp.R
 import com.jvg.dzjudoapp.core.modules.home.routes.HomeTabs
+import com.jvg.dzjudoapp.core.presentation.actions.TopBarActions
 import com.jvg.dzjudoapp.core.presentation.components.CustomClickableCard
 import com.jvg.dzjudoapp.core.presentation.components.CustomText
 import com.jvg.dzjudoapp.core.presentation.components.DefaultAlertDialog
 import com.jvg.dzjudoapp.core.presentation.components.DefaultBackArrow
 import com.jvg.dzjudoapp.core.presentation.components.DefaultStateLayoutComponent
 import com.jvg.dzjudoapp.core.presentation.components.DefaultTopBar
+import com.jvg.dzjudoapp.core.presentation.components.DefaultTopBarActions
 import com.jvg.dzjudoapp.core.presentation.components.ErrorScreen
 import com.jvg.dzjudoapp.core.presentation.components.LetterIcon
 import com.jvg.dzjudoapp.core.presentation.components.ListFooter
@@ -102,41 +100,16 @@ object StudentsTab : Tab {
                             )
                         },
                         actions = {
-                            IconButton(
-                                onClick = {
-                                    actionsVisible = !actionsVisible
-                                }
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_more_vert_24px),
-                                    contentDescription = "More options"
-                                )
-                            }
-
-                            DropdownMenu(
-                                expanded = actionsVisible,
-                                onDismissRequest = { actionsVisible = false }
-                            ) {
-                                DropdownMenuItem(
-                                    leadingIcon = {
-                                        Icon(
-                                            modifier = Modifier.size(18.dp),
-                                            painter = painterResource(id = R.drawable.ic_search_24px),
-                                            contentDescription = "Search"
-                                        )
-                                    },
-                                    text = {
-                                        CustomText(
-                                            text = "Search",
-                                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                                        )
-                                    },
-                                    onClick = {
-                                        viewModel.toggleVisibility(true)
-                                        actionsVisible = false
+                            DefaultTopBarActions(
+                                onMenuClick = { action ->
+                                    when {
+                                        action is TopBarActions.Search -> {
+                                            viewModel.toggleVisibility(true)
+                                        }
                                     }
-                                )
-                            }
+                                },
+                                items = listOf(TopBarActions.Search),
+                            )
                         }
                     )
                 }

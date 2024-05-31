@@ -53,4 +53,9 @@
     <string name="cancel">Cancel</string>
     <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete</string>
     <string name="delete">Delete</string>
+    <string name="exams">Exams</string>
+    <string name="active_student">Active student</string>
+    <string name="edit">Edit</string>
+    <string name="this_exam_doesn_t_exists">This exam doesn\'t exists</string>
+    <string name="exam_name_must_not_be_empty">Exam name must not be empty</string>
 </resources>

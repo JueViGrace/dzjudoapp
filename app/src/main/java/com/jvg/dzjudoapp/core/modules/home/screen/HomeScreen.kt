@@ -97,7 +97,7 @@ class HomeScreen : Screen {
                                 },
                                 onClick = {
                                     visible = false
-                                    navigator.push(AddStudentScreen())
+                                    navigator.parent?.push(AddStudentScreen())
                                 }
                             )
                             DropdownMenuItem(
